@@ -1,16 +1,18 @@
 /* global localStorage */
 import moment from 'moment'
+import numeral from 'numeral'
 import _ from 'lodash'
 import ajax from './ajax'
 import Handlebars from 'handlebars'
 
 // importing assets
-import './cssFiles'
+import './css'
 import productTpl from '../html/product.html'
 import categoryEmptyTpl from '../html/category-empty.html'
 
 const BEER_DELIVERY = (function () {
   let autocomplete
+  let totalCart = 0
   const graphqlApi = 'https://803votn6w7.execute-api.us-west-2.amazonaws.com/dev/public/graphql'
   // const graphqlApi = 'https://api.zx-courier.com/public/graphql'
 
@@ -24,7 +26,9 @@ const BEER_DELIVERY = (function () {
     productsSection: document.querySelector('.products'),
     productsList: document.querySelector('.products__list'),
     filterByName: document.querySelector('.filter-by-name'),
-    filterByCategory: document.querySelector('.filter-by-category')
+    filterByCategory: document.querySelector('.filter-by-category'),
+    cartTotal: document.querySelector('.cart-total'),
+    cartTotalPrice: document.querySelector('.cart-total-price')
   }
 
   const validateEntry = (e) => {
@@ -70,6 +74,42 @@ const BEER_DELIVERY = (function () {
     const getProductListError = (err) => console.log(err)
 
     ajax(graphqlApi, { method: 'POST', body: JSON.stringify(data) }, getProductListSuccess, getProductListError)
+  }
+
+  const showTotalCart = (total) => {
+    const formatted = numeral(total).format('0,0.00')
+    ui.cartTotalPrice.textContent = formatted.match(/NaN/) ? '0.00' : formatted
+    ui.cartTotal.classList.add('cart-fixed-bar')
+  }
+
+  const increaseItem = (ctx) => {
+    const { productPrice } = ctx.target.parentNode.dataset
+    const inputElem = ctx.target.parentNode.querySelector('input')
+    if (inputElem.value < 99) inputElem.value = Number(inputElem.value) + 1
+    totalCart += Number(productPrice)
+    if (totalCart < 0) totalCart = 0
+    showTotalCart(totalCart)
+  }
+
+  const decreaseItem = (ctx) => {
+    const { productPrice } = ctx.target.parentNode.dataset
+    const inputElem = ctx.target.parentNode.querySelector('input')
+    if (inputElem.value > 0) inputElem.value = Number(inputElem.value) - 1
+    if (totalCart > 0) totalCart -= Number(productPrice)
+    if (totalCart < 0) totalCart = 0
+    showTotalCart(totalCart)
+  }
+
+  const addCart = (ctx) => {
+    console.log(ctx)
+  }
+
+  const cardActions = (e) => {
+    e.preventDefault()
+    let { action } = e.target.dataset
+    if (action === 'increase-item') return increaseItem(e)
+    if (action === 'decrease-item') return decreaseItem(e)
+    if (action === 'add-cart') return addCart(e)
   }
 
   const filterByName = (e) => {
@@ -261,6 +301,7 @@ const BEER_DELIVERY = (function () {
     ui.searchChangeAddress.addEventListener('click', changeAddress)
     ui.filterByName.addEventListener('input', filterByName)
     ui.filterByCategory.addEventListener('change', filterByCategory)
+    ui.productsList.addEventListener('click', cardActions)
   })()
 
   return { gmapsAutoComplete }

@@ -22,6 +22,26 @@ body {
   font-size: 0.75rem;
 }
 
+.cart-total {
+  background: red;
+  line-height: 0px;
+  display: block;
+  font-size: 2em;
+  position: fixed;
+  bottom: 0;
+  padding: 0 2em;
+  width: 100%;
+  text-align: right;
+  color: #ffffff;
+  transition: all 0.5s ease-in;
+  visibility: hidden;
+}
+
+.cart-total.cart-fixed-bar {
+  line-height: 100px;
+  visibility: visible;
+}
+
 @media screen and (min-width: 768px) {
   .site-header {
     justify-content: space-between;

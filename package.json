@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "prepare-build": "rm -rf dist",
-    "build": "webpack -p",
+    "start": "npm i && webpack -p --progress && node server",
     "dev-watch": "webpack -w"
   },
   "repository": {
@@ -32,15 +31,22 @@
     "babel-preset-env": "^1.6.0",
     "eslint": "^4.6.1",
     "eslint-plugin-react": "^7.3.0",
-    "webpack": "^3.5.6"
-  },
-  "dependencies": {
+    "webpack": "^3.5.6",
     "clean-webpack-plugin": "^0.1.16",
     "css-loader": "^0.28.7",
     "handlebars": "^4.0.10",
     "handlebars-loader": "^1.6.0",
     "html-loader": "^0.5.1",
+    "webpack-dev-server": "^2.7.1"
+  },
+  "dependencies": {
+    "express": "^4.15.4",
     "lodash": "^4.17.4",
-    "moment": "^2.18.1"
+    "moment": "^2.18.1",
+    "numeral": "^2.0.6"
+  },
+  "engines": {
+    "node": "8.4.0",
+    "npm": "5.3.0"
   }
 }

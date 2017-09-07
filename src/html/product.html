@@ -6,10 +6,10 @@
   <div class="product__offer" itemscope itemtype="http://schema.org/Offer">
     <span class="price" itemprop="price">R$ {{price}}</span>
   </div>
-  <div class="product__quantity" itemscope itemtype="http://schema.org/TypeAndQuantityNode">
-    <button>-</button>
+  <div class="product__quantity" itemscope itemtype="http://schema.org/TypeAndQuantityNode" data-product-price="{{price}}">
+    <button data-action="decrease-item">-</button>
     <input type="text" itemprop="amountOfThisGood" value="0" readonly>
-    <button>+</button>
+    <button data-action="increase-item">+</button>
   </div>
-  <a class="product__button" href="#" title="Adicionar ao Carrinho"><span>Adicionar ao Carrinho</span></a>
+  <a class="product__button" data-action="add-cart" href="#" title="Adicionar ao Carrinho">Adicionar ao Carrinho</a>
 </article>
