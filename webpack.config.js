@@ -1,7 +1,6 @@
 'use strict'
 
 const path = require('path')
-const webpack = require('webpack')
 const HtmlPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const CleanPlugin = require('clean-webpack-plugin')
@@ -16,7 +15,6 @@ module.exports = {
   },
   plugins: [
     new CleanPlugin(['dist']),
-    // new webpack.HotModuleReplacementPlugin(),
     new ExtractTextPlugin('[name]-[hash].css'),
     new HtmlPlugin({
       title: 'Beer Delivery',
@@ -71,7 +69,8 @@ module.exports = {
   },
   resolve: {
     alias: {
-      src: path.join(__dirname, 'src')
+      src: path.join(__dirname, 'src'),
+      handlebars: 'handlebars/dist/handlebars.min.js'
     }
   }
 }

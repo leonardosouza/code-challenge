@@ -2,14 +2,17 @@
 import moment from 'moment'
 import _ from 'lodash'
 import ajax from './ajax'
+import Handlebars from 'handlebars'
 
 // importing assets
 import './cssFiles'
-// import productTpl from '../html/product.html'
+import productTpl from '../html/product.html'
+import categoryEmptyTpl from '../html/category-empty.html'
 
 const BEER_DELIVERY = (function () {
   let autocomplete
   const graphqlApi = 'https://803votn6w7.execute-api.us-west-2.amazonaws.com/dev/public/graphql'
+  // const graphqlApi = 'https://api.zx-courier.com/public/graphql'
 
   const ui = {
     cepField: document.querySelector('.search__form-input'),
@@ -18,15 +21,75 @@ const BEER_DELIVERY = (function () {
     searchForm: document.querySelector('.search__form'),
     searchChangeAddress: document.querySelector('.change-address'),
     experienceSection: document.querySelector('.best-experience'),
-    productsSection: document.querySelector('.products')
+    productsSection: document.querySelector('.products'),
+    productsList: document.querySelector('.products__list'),
+    filterByName: document.querySelector('.filter-by-name'),
+    filterByCategory: document.querySelector('.filter-by-category')
   }
 
   const validateEntry = (e) => {
     e.target.value = e.target.value.replace(/\D+/g, '')
   }
 
+  const getProductList = (pocId, textSearch = '', categoryId = 0, categoryName = '') => {
+    const data = {
+      query: `query pocCategorySearch($id: ID!, $search: String!, $categoryId: Int!) {
+          poc(id: $id) {
+            products(categoryId: $categoryId, search: $search) {
+              productVariants{
+                title
+                description
+                imageUrl
+                price
+              }
+            }
+          }
+        }`,
+      variables: { id: pocId, search: textSearch, categoryId },
+      operationName: 'pocCategorySearch'
+    }
+
+    const getProductListSuccess = (res) => {
+      if (_.get(res, 'data.poc.products')) {
+        const products = res.data.poc.products
+        const template = Handlebars.compile(productTpl)
+        let html = []
+        html.push(products.map(product => template(_.first(product.productVariants))))
+
+        if (products.length === 0) {
+          ui.productsList.innerHTML = Handlebars.compile(categoryEmptyTpl)({ categoryName })
+        } else {
+          ui.productsList.innerHTML = _.first(html).join('')
+        }
+
+        ui.experienceSection.classList.add('hide')
+        ui.productsSection.classList.remove('hide')
+      }
+    }
+
+    const getProductListError = (err) => console.log(err)
+
+    ajax(graphqlApi, { method: 'POST', body: JSON.stringify(data) }, getProductListSuccess, getProductListError)
+  }
+
+  const filterByName = (e) => {
+    if (localStorage && localStorage.pocSearch) {
+      const pocSearch = JSON.parse(localStorage.pocSearch)
+      getProductList(pocSearch.id, e.target.value)
+    }
+  }
+
+  const filterByCategory = (e) => {
+    if (localStorage && localStorage.pocSearch) {
+      const pocSearch = JSON.parse(localStorage.pocSearch)
+      const opts = e.target.options
+      const categoryId = Number(opts[opts.selectedIndex].id)
+      const categoryName = opts[opts.selectedIndex].textContent
+      getProductList(pocSearch.id, ui.filterByName.value, categoryId, categoryName)
+    }
+  }
+
   const getPOC = (e) => {
-    // CEP: 04715-001
     e.preventDefault()
     if (localStorage && localStorage.currentPlace) {
       const { lat, lng } = JSON.parse(localStorage.currentPlace)
@@ -98,7 +161,9 @@ const BEER_DELIVERY = (function () {
 
           if (_.first(res.data.pocSearch)) {
             ui.searchForm.classList.remove('poc-not-found')
-            localStorage.pocSearch = JSON.stringify(_.first(res.data.pocSearch))
+            const pocSearch = _.first(res.data.pocSearch)
+            localStorage.pocSearch = JSON.stringify(pocSearch)
+            getProductList(pocSearch.id)
           } else {
             ui.searchForm.classList.add('poc-not-found')
           }
@@ -111,6 +176,44 @@ const BEER_DELIVERY = (function () {
     } else {
       ui.cepField.focus()
     }
+  }
+
+  const populateCategories = (data = []) => {
+    data.map((category) => {
+      let opt = document.createElement('option')
+      opt.id = category.id
+      opt.textContent = category.title
+      ui.filterByCategory.appendChild(opt)
+    })
+  }
+
+  const loadCategories = () => {
+    const data = {
+      query: `query allCategoriesSearch {
+          allCategory{
+            title
+            id
+          }
+        }
+        `,
+      variables: null,
+      operationName: 'allCategoriesSearch'
+    }
+
+    const loadCategoriesSuccess = (res) => {
+      if (localStorage && _.get(res, 'data.allCategory')) {
+        populateCategories(res.data.allCategory)
+        localStorage.allCategories = JSON.stringify(res.data.allCategory)
+      }
+    }
+
+    const loadCategoriesError = (err) => console.log(err)
+
+    if (localStorage && localStorage.allCategories) {
+      populateCategories(JSON.parse(localStorage.allCategories))
+      return
+    }
+    ajax(graphqlApi, { method: 'POST', body: JSON.stringify(data) }, loadCategoriesSuccess, loadCategoriesError)
   }
 
   const changeAddress = (e) => {
@@ -150,11 +253,14 @@ const BEER_DELIVERY = (function () {
   (function () {
     // initialize
     loadGMapsApi()
+    loadCategories()
 
     // add events
     ui.cepField.addEventListener('input', validateEntry)
     ui.searchButton.addEventListener('click', getPOC)
     ui.searchChangeAddress.addEventListener('click', changeAddress)
+    ui.filterByName.addEventListener('input', filterByName)
+    ui.filterByCategory.addEventListener('change', filterByCategory)
   })()
 
   return { gmapsAutoComplete }

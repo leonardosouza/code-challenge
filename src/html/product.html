@@ -1,9 +1,10 @@
 <article class="product" itemscope itemtype="http://schema.org/Product">
   <a class="product__image" href="#" title="#" itemprop="url">
-            <img src="https://s3-us-west-2.amazonaws.com/ze-delivery/upload/images/5662fc109ac61.jpg" alt="#title" width="#" height="#" itemprop="image" /></a>
-  <h1 class="product__title" itemprop="name">Skol 300ml | Apenas o Líquido.</h1>
+    <img src="{{imageUrl}}" alt="{{title}}" itemprop="image" height="160" />
+  </a>
+  <h1 class="product__title" itemprop="name">{{title}}</h1>
   <div class="product__offer" itemscope itemtype="http://schema.org/Offer">
-    <span class="price" itemprop="price">R$100.00</span>
+    <span class="price" itemprop="price">R$ {{price}}</span>
   </div>
   <div class="product__quantity" itemscope itemtype="http://schema.org/TypeAndQuantityNode">
     <button>-</button>
