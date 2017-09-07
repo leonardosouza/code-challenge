@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepare-build": "rm -rf dist",
+    "build": "webpack -p",
+    "dev-watch": "webpack -w"
   },
   "repository": {
     "type": "git",
@@ -17,12 +19,23 @@
     "url": "https://github.com/leonardosouza/code-challenge/issues"
   },
   "homepage": "https://github.com/leonardosouza/code-challenge#readme",
-  "dependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-preset-env": "^1.6.0"
-  },
   "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "file-loader": "^0.11.2",
+    "html-webpack-plugin": "^2.30.1",
+    "raw-loader": "^0.5.1",
+    "standard-loader": "^6.0.1",
+    "style-loader": "^0.18.2",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
     "eslint": "^4.6.1",
-    "eslint-plugin-react": "^7.3.0"
+    "eslint-plugin-react": "^7.3.0",
+    "webpack": "^3.5.6"
+  },
+  "dependencies": {
+    "clean-webpack-plugin": "^0.1.16",
+    "css-loader": "^0.28.7"
   }
 }

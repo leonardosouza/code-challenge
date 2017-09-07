@@ -1,0 +1,36 @@
+body {
+  font: 100%/1.5 Poppins;
+}
+
+
+.site-header,
+.site-footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
+}
+
+.site-header {
+  background: #fcdb00;
+  font-size: 2rem;
+  font-family: PoppinsBold;
+}
+
+.site-footer {
+  background: #000000;
+  color: #ffffff;
+  font-size: 0.75rem;
+}
+
+@media screen and (min-width: 768px) {
+  .site-header {
+    justify-content: space-between;
+    padding: 0 2em;
+  }
+
+  .site-footer {
+    justify-content: flex-start;
+    padding: 0 4em;
+  }
+}
