@@ -53,3 +53,6 @@ html {
 *, *:before, *:after {
   box-sizing: inherit;
 }
+
+/* util */
+.hide { display: none !important; }

@@ -33,5 +33,8 @@ module.exports = {
             "error",
             "never"
         ]
+    },
+    "globals": {
+      "localStorage": true
     }
 };

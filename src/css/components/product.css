@@ -1,7 +1,3 @@
-.products.hide {
-  display: none;
-}
-
 .product {
   border: 1px solid #dadada;
   box-shadow: 1px 1px 1px gray;
