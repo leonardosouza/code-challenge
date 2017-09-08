@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "selenium-start": "selenium-standalone install && selenium-standalone start",
+    "test": "codeceptjs run --steps",
     "start": "npm i && webpack -p --progress && node server",
     "dev-watch": "webpack -w"
   },
@@ -40,10 +42,12 @@
     "webpack-dev-server": "^2.7.1"
   },
   "dependencies": {
+    "codeceptjs-webdriverio": "^1.1.0",
     "express": "^4.15.4",
     "lodash": "^4.17.4",
     "moment": "^2.18.1",
-    "numeral": "^2.0.6"
+    "numeral": "^2.0.6",
+    "selenium-standalone": "^6.9.0"
   },
   "engines": {
     "node": "8.4.0",
